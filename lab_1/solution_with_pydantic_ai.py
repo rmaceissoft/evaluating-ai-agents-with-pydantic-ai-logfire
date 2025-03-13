@@ -1,5 +1,11 @@
 # /// script
-# dependencies = ["duckdb", "pandas", "pyarrow", "pydantic-ai", "email-validator"]
+# dependencies = [
+#   "duckdb==1.1.3",
+#   "pandas",
+#   "pyarrow",
+#   "pydantic-ai",
+#   "email-validator"
+# ]
 # ///
 
 # =============================

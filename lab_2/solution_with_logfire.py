@@ -1,5 +1,11 @@
 # /// script
-# dependencies = ["duckdb", "logfire", "openai", "pandas",  "python-dotenv"]
+# dependencies = [
+#   "duckdb==1.1.3",
+#   "logfire",
+#   "openai==1.54.5",
+#   "pandas",
+#   "python-dotenv"
+# ]
 # ///
 
 

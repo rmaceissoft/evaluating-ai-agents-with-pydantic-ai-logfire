@@ -1,5 +1,14 @@
 # /// script
-# dependencies = ["arize-phoenix", "arize-phoenix-otel", "duckdb", "openai", "openinference-instrumentation", "openinference-instrumentation-openai", "pandas",  "python-dotenv"]
+# dependencies = [
+#   "arize-phoenix==7.0.0",
+#   "arize-phoenix-otel==0.7.1",
+#   "duckdb==1.1.3",
+#   "openai==1.54.5",
+#   "openinference-instrumentation==0.1.21",
+#   "openinference-instrumentation-openai==0.1.18",
+#   "pandas",
+#   "python-dotenv",
+# ]
 # ///
 
 
