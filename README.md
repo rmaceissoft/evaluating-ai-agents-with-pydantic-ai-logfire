@@ -61,11 +61,9 @@ Files:
 |--|--|--|
 |Configuration  | `PROJECT_NAME = "tracing-agent"`<br>`tracer_provider = register(`<br>`project_name=PROJECT_NAME,`<br>`endpoint=get_phoenix_endpoint() + "v1/traces"`<br>`)`<br>`tracer = tracer_provider.get_tracer(__name__)`  | `logfire.configure()` |
 |Auto-Instrumentation for OpenAI  | `OpenAIInstrumentor().instrument(tracer_provider = tracer_provider)` | `logfire.instrument_openai(client)` |
-| Span creation | `#decorators`<br>`@tracer.tool()`<br>`@tracer.chain()`<br><br>`#context manager`<br>`with  tracer.start_as_current_span("AgentRun") as span:` | `#decorators`<br>`@logfire.tool`<br><br>`#context manager`<br>`with @logfire.span("AgentRun") as span:`|
+| Span creation | `#decorators`<br>`@tracer.tool()`<br>`@tracer.chain()`<br><br>`#context manager`<br>`with  tracer.start_as_current_span("AgentRun") as span:` | `#decorators`<br>`@logfire.instrument("tool=lookup_sales_data", span_name="{tool=}")`<br>`@logfire.instrument("chain=handle_tool_calls", span_name="{chain=}")` <br><br>`#context manager`<br>`with @logfire.span("{agent=}", agent="AgentRun") as span:`|
 
 
-  
-  
 
 Notes:
 
@@ -77,10 +75,9 @@ Notes:
 
 - The `@logfire.instrument` decorator enables the wrapping of entire functions within a span, streamlining the instrumentation process.
 
-- It is important to note that Logfire does not allow for the modification of the span kind attribute, which defaults to `span`.
+- Logfire does not allow modifications to the span kind attribute, which is set to `span` by default. As a result, when moving to Logfire, the `span_name` attribute acts as a replacement for the `kind` attribute, making it easier to query spans in the future.
 
-  
-  
+
 
 ### Lab 3: Adding router and skill evaluations [(Go to lab page)](https://learn.deeplearning.ai/courses/evaluating-ai-agents/lesson/yx7uz/lab-3:-adding-router-and-skill-evaluations)
 

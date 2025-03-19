@@ -2,8 +2,9 @@
 # dependencies = [
 #   "duckdb==1.1.3",
 #   "logfire",
-#   "openai==1.54.5",
+#   "openai==1.66.3",
 #   "pandas",
+#   "pyarrow",
 #   "python-dotenv"
 # ]
 # ///
@@ -51,7 +52,9 @@ from pydantic import BaseModel, Field
 # initializing the OpenAI client
 # ==============================
 
+# HINT: change the api key via the OPENAI_API_KEY env variable.
 openai_api_key = get_openai_api_key()
+# HINT: change the base_url via the OPENAI_BASE_URL env variable.
 client = OpenAI(api_key=openai_api_key)
 
 MODEL = "gpt-4o-mini"
@@ -62,6 +65,7 @@ MODEL = "gpt-4o-mini"
 # =======
 
 # config logfire programmatically via configure
+# HINT: set the logfire environment via the LOGFIRE_ENVIRONMENT env variable.
 logfire.configure()
 
 # instruments calls to OpenAI
@@ -107,7 +111,7 @@ def generate_sql_query(prompt: str, columns: list, table_name: str) -> str:
 
 
 # code for tool 1
-@logfire.instrument
+@logfire.instrument("tool=lookup_sales_data", span_name="{tool=}")
 def lookup_sales_data(prompt: str) -> str:
     """Implementation of sales data lookup from parquet file using SQL"""
     try:
@@ -125,11 +129,11 @@ def lookup_sales_data(prompt: str) -> str:
         sql_query = sql_query.strip()
         sql_query = sql_query.replace("```sql", "").replace("```", "")
 
-        with logfire.span("execute_sql_query") as span:
-            span.set_attribute(input=sql_query)
+        with logfire.span("{chain=}", chain="execute_sql_query") as span:
+            span.set_attribute(key="input", value=sql_query)
             # step 3: execute the SQL query
             result = duckdb.sql(sql_query).df()
-            span.set_attribute(output=str(result))
+            span.set_attribute(key="output", value=str(result))
             span.set_status(StatusCode.OK)
         
         return result.to_string()
@@ -148,7 +152,7 @@ Your job is to answer the following question: {prompt}
 """
 
 # code for tool 2
-@logfire.instrument
+@logfire.instrument("tool=analyze_sales_data", span_name="{tool=}")
 def analyze_sales_data(prompt: str, data: str) -> str:
     """Implementation of AI-powered sales data analysis"""
     formatted_prompt = DATA_ANALYSIS_PROMPT.format(data=data, prompt=prompt)
@@ -182,7 +186,7 @@ class VisualizationConfig(BaseModel):
 
 
 # code for step 1 of tool 3
-@logfire.instrument
+@logfire.instrument("tool=extract_chart_config", span_name="{tool=}")
 def extract_chart_config(data: str, visualization_goal: str) -> dict:
     """Generate chart visualization configuration
     
@@ -233,7 +237,7 @@ config: {config}
 
 
 # code for step 2 of tool 3
-@logfire.instrument
+@logfire.instrument("tool=create_chart", span_name="{tool=}")
 def create_chart(config: dict) -> str:
     """Create a chart based on the configuration"""
     formatted_prompt = CREATE_CHART_PROMPT.format(config=config)
@@ -250,8 +254,8 @@ def create_chart(config: dict) -> str:
     return code
 
 
-# code for tool 3
-@logfire.instrument
+# code for tool 3@logfire.instrument
+@logfire.instrument("tool=generate_visualization", span_name="{tool=}")
 def generate_visualization(data: str, visualization_goal: str) -> str:
     """Generate a visualization based on the data and goal"""
     config = extract_chart_config(data, visualization_goal)
@@ -328,7 +332,7 @@ tool_implementations = {
 # ------------
 
 # code for executing the tools returned in the model's response
-@logfire.instrument
+@logfire.instrument("chain=handle_tool_calls", span_name="{chain=}")
 def handle_tool_calls(tool_calls, messages):
     
     for tool_call in tool_calls:   
@@ -360,7 +364,7 @@ def run_agent(messages):
 
     while True:
         print("Making router call to OpenAI")
-        with logfire.span("router_call", openinference_span_kind="chain") as span:
+        with logfire.span("{chain=}", chain="router_call", _tags=["CHAIN"]) as span:
             span.set_attribute(key="input", value=messages)
             response = client.chat.completions.create(
                 model=MODEL,
@@ -386,7 +390,7 @@ def run_agent(messages):
 def start_main_span(messages):
     print("Starting main span with messages:", messages)
     
-    with logfire.span("AgentRun") as span:
+    with logfire.span("{agent=}", agent="AgentRun", _tags=["AGENT"]) as span:
         span.set_attribute(key="input", value=messages)
         ret = run_agent(messages)
         print("Main span completed with return value:", ret)
