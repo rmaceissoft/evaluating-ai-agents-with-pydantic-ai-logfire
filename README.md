@@ -12,15 +12,15 @@ This repository is a personal initiative to review and apply the concepts learne
 
 - [Labs](#labs)
 
-	- [Lab 1: Building your agent](#lab-1-building-your-agent)
+	- [Lab 1: Building your agent](#lab-1-building-your-agent-go-to-lab-page)
 
-	- [Lab 2: Tracing your agent](#lab-2-tracing-your-agent)
+	- [Lab 2: Tracing your agent](#lab-2-tracing-your-agent-go-to-lab-page)
 
-	- [Lab 3: Adding router and skill evaluations](#lab-3-adding-router-and-skill-evaluations)
+	- [Lab 3: Adding router and skill evaluations](#lab-3-adding-router-and-skill-evaluations-go-to-lab-page)
 
-	- [Lab 4: Adding trajectory evaluations](#lab-4-adding-trajectory-evaluations)
+	- [Lab 4: Adding trajectory evaluations](#lab-4-adding-trajectory-evaluations-go-to-lab-page)
 
-	- [Lab 5: Adding structure to your evaluations](#lab-5-adding-structure-to-your-evaluations)
+	- [Lab 5: Adding structure to your evaluations](#lab-5-adding-structure-to-your-evaluations-go-to-lab-page)
 
   
 
